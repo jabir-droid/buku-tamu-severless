@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Buku Tamu → Telegram (Serverless)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 text-slate-800">
+  <div class="min-h-screen bg-gradient-to-b from-slate-50 to-white">
+    <div class="max-w-4xl mx-auto px-4 py-10">
+      <header class="mb-8">
+        <h1 class="text-3xl md:text-4xl font-bold tracking-tight">Buku Tamu → Telegram</h1>
+        <p class="text-slate-600">Data dikirim aman via server Vercel.</p>
+      </header>
+
+      <div id="alert" class="hidden mb-4 rounded-xl border px-4 py-3 text-sm"></div>
+
+      <form id="guestForm" class="bg-white rounded-2xl shadow-sm border p-5 md:p-6">
+        <div class="grid md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium mb-1">Nama <span class="text-rose-600">*</span></label>
+            <input id="nama" required class="w-full rounded-xl border px-3 py-2 outline-none focus:ring-2 focus:ring-sky-200" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-1">Kehadiran <span class="text-rose-600">*</span></label>
+            <select id="kehadiran" class="w-full rounded-xl border px-3 py-2 outline-none focus:ring-2 focus:ring-sky-200">
+              <option>Hadir</option>
+              <option>Izin</option>
+              <option>Belum Pasti</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-1">Jumlah Tamu</label>
+            <input id="jumlah" type="number" min="1" value="1" class="w-full rounded-xl border px-3 py-2 outline-none focus:ring-2 focus:ring-sky-200" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-1">Kontak (opsional)</label>
+            <input id="kontak" class="w-full rounded-xl border px-3 py-2 outline-none focus:ring-2 focus:ring-sky-200" />
+          </div>
+          <div class="md:col-span-2">
+            <label class="block text-sm font-medium mb-1">Ucapan</label>
+            <textarea id="ucapan" rows="4" class="w-full rounded-xl border px-3 py-2 outline-none focus:ring-2 focus:ring-sky-200"></textarea>
+          </div>
+        </div>
+
+        <div class="flex gap-3 pt-4">
+          <button type="submit" class="rounded-2xl bg-sky-600 text-white px-4 py-2 hover:bg-sky-700 shadow">Kirim</button>
+          <button type="button" id="resetBtn" class="rounded-2xl border px-4 py-2 hover:bg-slate-50">Reset</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+    const alertBox = $("alert");
+
+    function showAlert(text, ok = true) {
+      alertBox.textContent = text;
+      alertBox.className =
+        "mb-4 rounded-xl border px-4 py-3 text-sm " +
+        (ok ? "border-emerald-200 bg-emerald-50 text-emerald-800" : "border-rose-200 bg-rose-50 text-rose-800");
+      alertBox.classList.remove("hidden");
+      setTimeout(() => alertBox.classList.add("hidden"), 2200);
+    }
+
+    function currentData() {
+      return {
+        nama: $("nama").value.trim(),
+        kehadiran: $("kehadiran").value,
+        jumlah: ($("jumlah").value || "1").replace(/[^0-9]/g, ""),
+        kontak: $("kontak").value.trim(),
+        ucapan: $("ucapan").value.trim(),
+      };
+    }
+
+    function validate(d) {
+      if (!d.nama) return "Nama wajib diisi";
+      if (!d.kehadiran) return "Kehadiran wajib diisi";
+      const j = parseInt(d.jumlah, 10);
+      if (!Number.isFinite(j) || j < 1) return "Jumlah minimal 1";
+      return "";
+    }
+
+    $("guestForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const data = currentData();
+      const err = validate(data);
+      if (err) return showAlert(err, false);
+
+      try {
+        const res = await fetch("/api/send-telegram", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            nama: data.nama,
+            kehadiran: data.kehadiran,
+            jumlah: parseInt(data.jumlah, 10) || 1,
+            kontak: data.kontak,
+            ucapan: data.ucapan,
+          }),
+        });
+
+        if (!res.ok) {
+          const t = await res.json().catch(() => ({}));
+          return showAlert("Gagal mengirim: " + (t.error || res.statusText), false);
+        }
+
+        $("nama").value = "";
+        $("kehadiran").value = "Hadir";
+        $("jumlah").value = "1";
+        $("kontak").value = "";
+        $("ucapan").value = "";
+        showAlert("Terkirim ke Telegram.");
+      } catch {
+        showAlert("Terjadi kesalahan jaringan.", false);
+      }
+    });
+
+    $("resetBtn").addEventListener("click", () => {
+      $("nama").value = "";
+      $("kehadiran").value = "Hadir";
+      $("jumlah").value = "1";
+      $("kontak").value = "";
+      $("ucapan").value = "";
+    });
+  </script>
+</body>
+</html>
