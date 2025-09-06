@@ -14,6 +14,7 @@
         <p class="text-slate-600">Data dikirim aman via server Vercel.</p>
       </header>
 
+      <!-- ALERT (fallback) -->
       <div id="alert" class="hidden mb-4 rounded-xl border px-4 py-3 text-sm"></div>
 
       <!-- FORM -->
@@ -83,12 +84,68 @@
         </div>
       </form>
       <!-- /FORM -->
+
+      <!-- KIRIM UANG -->
+      <section class="mt-10 bg-white rounded-2xl shadow-sm border p-5 md:p-6">
+        <h2 class="text-lg font-semibold mb-2">Ingin kirim uang?</h2>
+        <p class="text-sm text-slate-600 mb-4">
+          Kamu bisa transfer lewat tombol di bawah atau scan QRIS. Terima kasih 🙏
+        </p>
+
+        <div class="flex flex-wrap gap-3 mb-4">
+          <!-- GANTI href= dengan link asli kamu -->
+          <a href="https://link.dana.id/mintadana/CONTOH" target="_blank" rel="noopener"
+             class="rounded-xl border px-4 py-2 hover:bg-slate-50">Dana</a>
+          <a href="https://saweria.co/CONTOH" target="_blank" rel="noopener"
+             class="rounded-xl border px-4 py-2 hover:bg-slate-50">Saweria</a>
+          <a href="https://trakteer.id/CONTOH/tip" target="_blank" rel="noopener"
+             class="rounded-xl border px-4 py-2 hover:bg-slate-50">Trakteer</a>
+          <button id="copyRek" type="button"
+             class="rounded-xl border px-4 py-2 hover:bg-slate-50">Salin Rekening</button>
+        </div>
+
+        <!-- Ganti src QRIS dengan gambar kamu sendiri (opsional) -->
+        <div class="rounded-xl border p-4 flex items-center gap-4">
+          <img id="qrisImg" src="" alt="QRIS" class="w-36 h-36 bg-slate-100 rounded-md object-contain">
+          <div class="text-sm text-slate-600">
+            <p class="mb-1">QRIS (opsional). Taruh URL gambar QRIS kamu di variabel <code>QRIS_URL</code> di bawah.</p>
+            <p>Atau klik tombol metode di atas.</p>
+          </div>
+        </div>
+      </section>
+      <!-- /KIRIM UANG -->
+    </div>
+  </div>
+
+  <!-- MODAL SUKSES -->
+  <div id="successModal"
+       class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+    <div class="bg-white w-full max-w-md rounded-2xl shadow-xl p-6">
+      <h3 class="text-lg font-semibold mb-2">Terkirim 🎉</h3>
+      <pre id="successSummary" class="text-sm bg-slate-50 border rounded-lg p-3 whitespace-pre-wrap mb-4"></pre>
+      <div class="flex justify-end gap-2">
+        <a href="#donate" id="goDonate"
+           class="rounded-xl border px-4 py-2 hover:bg-slate-50">Kirim Uang</a>
+        <button id="closeModal"
+                class="rounded-xl bg-sky-600 text-white px-4 py-2 hover:bg-sky-700">Tutup</button>
+      </div>
     </div>
   </div>
 
   <script>
     const $ = (id) => document.getElementById(id);
     const alertBox = $("alert");
+
+    // ====== CONFIG KIRIM UANG (ganti sesuai punyamu) ======
+    const REKENING_TEXT = "BCA 123456789 a.n. Nama Kamu";
+    const QRIS_URL = ""; // contoh: "https://domainmu.com/qris.png"
+    // =====================================================
+
+    if (QRIS_URL) {
+      const img = $("qrisImg");
+      img.src = QRIS_URL;
+      img.classList.remove("bg-slate-100");
+    }
 
     function showAlert(text, ok = true) {
       alertBox.textContent = text;
@@ -98,7 +155,7 @@
           ? "border-emerald-200 bg-emerald-50 text-emerald-800"
           : "border-rose-200 bg-rose-50 text-rose-800");
       alertBox.classList.remove("hidden");
-      setTimeout(() => alertBox.classList.add("hidden"), 2200);
+      setTimeout(() => alertBox.classList.add("hidden"), 2400);
     }
 
     function currentData() {
@@ -118,6 +175,17 @@
       const j = parseInt(d.jumlah, 10);
       if (!Number.isFinite(j) || j < 1) return "Jumlah minimal 1";
       return "";
+    }
+
+    function buildSummary(d) {
+      const lines = [
+        `Nama: ${d.nama}`,
+        `Kehadiran: ${d.kehadiran}`,
+        `Jumlah: ${parseInt(d.jumlah,10)||1}`,
+        d.kontak ? `Kontak: ${d.kontak}` : "",
+        d.ucapan ? `Ucapan: ${d.ucapan}` : "",
+      ].filter(Boolean);
+      return lines.join("\n");
     }
 
     $("guestForm").addEventListener("submit", async (e) => {
@@ -151,7 +219,9 @@
         $("kontak").value = "";
         $("ucapan").value = "";
 
-        showAlert("Terkirim ke Telegram.");
+        // tampilkan modal sukses + ringkasan
+        $("successSummary").textContent = buildSummary(data);
+        $("successModal").classList.remove("hidden");
       } catch {
         showAlert("Terjadi kesalahan jaringan.", false);
       }
@@ -163,6 +233,26 @@
       $("jumlah").value = "1";
       $("kontak").value = "";
       $("ucapan").value = "";
+    });
+
+    $("closeModal").addEventListener("click", () => {
+      $("successModal").classList.add("hidden");
+    });
+
+    $("goDonate").addEventListener("click", () => {
+      $("successModal").classList.add("hidden");
+      // scroll ke bagian donasi
+      const sec = document.querySelector("section.mt-10");
+      if (sec) sec.scrollIntoView({ behavior: "smooth" });
+    });
+
+    $("copyRek").addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(REKENING_TEXT);
+        showAlert("Nomor rekening disalin.", true);
+      } catch {
+        showAlert("Gagal menyalin. Salin manual: " + REKENING_TEXT, false);
+      }
     });
   </script>
 </body>
