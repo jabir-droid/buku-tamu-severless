@@ -44,9 +44,10 @@
         </div>
       </header>
 
+      <!-- ALERT -->
       <div id="alert" class="hidden mt-6 mb-4 rounded-2xl border px-4 py-3 text-sm"></div>
 
-      <!-- FORM -->
+      <!-- FORM UCAPAN -->
       <form id="guestForm" class="mt-6 rounded-3xl card shadow-sm p-5 md:p-6">
         <div class="grid md:grid-cols-2 gap-4">
           <div>
@@ -87,7 +88,6 @@
         </div>
 
         <div class="flex gap-3 pt-5">
-          <!-- Tombol Kirim dengan ikon hati -->
           <button type="submit" class="flex items-center gap-2 rounded-2xl bg-rose-600 text-white px-5 py-2.5 hover:bg-rose-700 shadow-md shadow-rose-200 transition">
             <span>❤️</span> Kirim
           </button>
@@ -97,7 +97,7 @@
         </div>
       </form>
 
-      <!-- DONASI -->
+      <!-- PILIHAN TANDA KASIH -->
       <section class="mt-8 rounded-3xl card shadow-sm p-5 md:p-6" id="donasi">
         <h2 class="text-lg font-semibold mb-2">Kirim Tanda Kasih</h2>
         <p class="text-sm opacity-80 mb-4">Pilih metode transfer:</p>
@@ -108,22 +108,65 @@
             <span>Transfer Bank (BSI)</span>
           </label>
           <label class="flex items-center gap-2">
-            <input type="radio" name="payMethod" value="dana" class="text-rose-600 focus:ring-rose-500">
-            <span>Dana</span>
-          </label>
-          <label class="flex items-center gap-2">
             <input type="radio" name="payMethod" value="ovo" class="text-rose-600 focus:ring-rose-500">
             <span>OVO</span>
-          </label>
-          <label class="flex items-center gap-2">
-            <input type="radio" name="payMethod" value="gopay" class="text-rose-600 focus:ring-rose-500">
-            <span>GoPay</span>
           </label>
         </div>
 
         <div id="payDetail" class="mt-4 p-4 rounded-2xl border border-rose-200 bg-rose-50/50 text-sm">
           <p>Pilih metode di atas untuk melihat detail transfer.</p>
         </div>
+      </section>
+
+      <!-- FORM KONFIRMASI PEMBAYARAN -->
+      <section class="mt-6 rounded-3xl card shadow-sm p-5 md:p-6" id="konfirmasi">
+        <h2 class="text-lg font-semibold mb-2">Konfirmasi Pembayaran</h2>
+        <p class="text-sm opacity-80 mb-4">Isi form ini setelah melakukan transfer agar kami mudah memverifikasi.</p>
+
+        <form id="payConfirmForm" class="grid md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium mb-1">Nama Pengirim <span class="text-rose-600">*</span></label>
+            <input id="pc_nama" required placeholder="Nama sesuai rekening / akun"
+                   class="w-full rounded-2xl border border-rose-200/70 px-3 py-2 outline-none focus:ring-4 focus:ring-pink-200/60" />
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium mb-1">Metode <span class="text-rose-600">*</span></label>
+            <select id="pc_metode" required
+                    class="w-full rounded-2xl border border-rose-200/70 px-3 py-2 outline-none focus:ring-4 focus:ring-pink-200/60">
+              <option value="">-- pilih --</option>
+              <option>BSI</option>
+              <option>OVO</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium mb-1">Nominal (Rp) <span class="text-rose-600">*</span></label>
+            <input id="pc_nominal" type="number" min="1000" step="1000" required placeholder="Contoh: 50000"
+                   class="w-full rounded-2xl border border-rose-200/70 px-3 py-2 outline-none focus:ring-4 focus:ring-pink-200/60" />
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium mb-1">Tanggal Transfer</label>
+            <input id="pc_tanggal" type="date"
+                   class="w-full rounded-2xl border border-rose-200/70 px-3 py-2 outline-none focus:ring-4 focus:ring-pink-200/60" />
+          </div>
+
+          <div class="md:col-span-2">
+            <label class="block text-sm font-medium mb-1">Catatan (opsional)</label>
+            <textarea id="pc_catatan" rows="3" placeholder="Keterangan tambahan (opsional)"
+                      class="w-full rounded-2xl border border-rose-200/70 px-3 py-2 outline-none focus:ring-4 focus:ring-pink-200/60"></textarea>
+          </div>
+
+          <div class="md:col-span-2 flex gap-3 pt-1">
+            <button type="submit" class="flex items-center gap-2 rounded-2xl bg-rose-600 text-white px-5 py-2.5 hover:bg-rose-700 shadow-md shadow-rose-200 transition">
+              <span>✅</span> Kirim Konfirmasi
+            </button>
+            <button type="button" id="pc_reset" class="rounded-2xl border border-rose-200 px-5 py-2.5 hover:bg-rose-50">
+              Reset
+            </button>
+          </div>
+        </form>
       </section>
     </div>
   </div>
@@ -155,6 +198,7 @@
       setTimeout(() => alertBox.classList.add("hidden"), 2400);
     }
 
+    // ==== FORM UCAPAN ====
     function currentData() {
       return {
         nama: $("nama").value.trim(),
@@ -164,7 +208,6 @@
         ucapan: $("ucapan").value.trim(),
       };
     }
-
     function validate(d) {
       if (!d.nama) return "Nama wajib diisi";
       if (!d.kehadiran) return "Kehadiran wajib diisi";
@@ -173,7 +216,6 @@
       if (!Number.isFinite(j) || j < 1) return "Jumlah minimal 1";
       return "";
     }
-
     function buildSummary(d) {
       const lines = [
         `Nama: ${d.nama}`,
@@ -239,13 +281,11 @@
       if (sec) sec.scrollIntoView({ behavior: "smooth" });
     });
 
+    // ==== DETAIL METODE TANDA KASIH (BSI / OVO) ====
     const paymentDetails = {
       bsi: "Bank Syariah Indonesia (BSI)\nNo.Rek: 7195450433\nA.N: Jabir",
-      dana: `Link Dana: <a href="https://link.dana.id/minta?full_url=https://qr.dana.id/v1/281012012024042601932781" target="_blank" rel="noopener">Buka tautan</a><br>atau No.HP: 082122346705`,
-      ovo: "No. OVO: 082122346705\nNama: Jabir",
-      gopay: "No. GoPay: 082122346705\nNama: Jabir"
+      ovo: "No. OVO: 082122346705\nNama: Jabir"
     };
-
     const radios = document.querySelectorAll("input[name='payMethod']");
     const detailBox = document.getElementById("payDetail");
 
@@ -258,21 +298,109 @@
         </div>`;
       document.getElementById("copyBtn").onclick = async () => {
         try {
-          const plain = content.replace(/<[^>]+>/g, "");
-          await navigator.clipboard.writeText(plain);
+          await navigator.clipboard.writeText(content);
           showAlert("Detail disalin.");
         } catch {
           showAlert("Gagal menyalin.", false);
         }
       };
     }
-
     radios.forEach(r => r.addEventListener("change", () => {
       const val = document.querySelector("input[name='payMethod']:checked").value;
       renderPayDetail(val);
     }));
-
     renderPayDetail("bsi");
+
+    // ==== FORM KONFIRMASI PEMBAYARAN ====
+    function pcData() {
+      return {
+        nama: $("pc_nama").value.trim(),
+        metode: $("pc_metode").value,
+        nominal: ($("pc_nominal").value || "").replace(/[^0-9]/g, ""),
+        tanggal: $("pc_tanggal").value,
+        catatan: $("pc_catatan").value.trim(),
+      };
+    }
+    function pcValidate(d) {
+      if (!d.nama) return "Nama pengirim wajib diisi";
+      if (!d.metode) return "Metode wajib dipilih";
+      const n = parseInt(d.nominal, 10);
+      if (!Number.isFinite(n) || n < 1000) return "Nominal minimal 1.000";
+      return "";
+    }
+    function pcSummary(d) {
+      const rupiah = d.nominal ? `Rp${Number(d.nominal).toLocaleString("id-ID")}` : "";
+      const lines = [
+        "Konfirmasi Pembayaran",
+        `Nama Pengirim: ${d.nama}`,
+        `Metode: ${d.metode}`,
+        rupiah ? `Nominal: ${rupiah}` : "",
+        d.tanggal ? `Tanggal: ${d.tanggal}` : "",
+        d.catatan ? `Catatan: ${d.catatan}` : "",
+      ].filter(Boolean);
+      return lines.join("\n");
+    }
+
+    document.getElementById("payConfirmForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const d = pcData();
+      const err = pcValidate(d);
+      if (err) return showAlert(err, false);
+
+      try {
+        // kirim ke endpoint yang sama, dengan payload khusus konfirmasi
+        const res = await fetch("/api/send-telegram", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            // tag kecil agar mudah dibaca saat masuk Telegram
+            tipe: "konfirmasi_pembayaran",
+            nama_pengirim: d.nama,
+            metode: d.metode,
+            nominal: parseInt(d.nominal, 10) || undefined,
+            tanggal: d.tanggal || undefined,
+            catatan: d.catatan || undefined
+          })
+        });
+
+        if (!res.ok) {
+          const t = await res.json().catch(() => ({}));
+          return showAlert("Konfirmasi gagal dikirim: " + (t.error || res.statusText), false);
+        }
+
+        // reset form
+        $("pc_nama").value = "";
+        $("pc_metode").value = "";
+        $("pc_nominal").value = "";
+        $("pc_tanggal").value = "";
+        $("pc_catatan").value = "";
+
+        // tampilkan modal dengan ringkasan
+        $("successSummary").textContent = pcSummary(d);
+        $("successModal").classList.remove("hidden");
+      } catch {
+        showAlert("Terjadi kesalahan jaringan.", false);
+      }
+    });
+
+    document.getElementById("pc_reset").addEventListener("click", () => {
+      $("pc_nama").value = "";
+      $("pc_metode").value = "";
+      $("pc_nominal").value = "";
+      $("pc_tanggal").value = "";
+      $("pc_catatan").value = "";
+    });
+
+    // set default tanggal = hari ini
+    (function setToday() {
+      const el = $("pc_tanggal");
+      if (!el) return;
+      const t = new Date();
+      const y = t.getFullYear();
+      const m = String(t.getMonth()+1).padStart(2,"0");
+      const d = String(t.getDate()).padStart(2,"0");
+      el.value = `${y}-${m}-${d}`;
+    })();
   </script>
 </body>
 </html>
