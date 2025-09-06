@@ -3,31 +3,63 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Buku Tamu → Telegram (Serverless)</title>
+  <title>Ruang Tanda & Kasih</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Gradasi lembut + kelopak mawar samar */
+    body {
+      background:
+        radial-gradient(1200px 600px at -10% -10%, rgba(255,192,203,.25), transparent 60%),
+        radial-gradient(900px 500px at 110% 0%, rgba(255,182,193,.25), transparent 60%),
+        radial-gradient(900px 500px at 0% 110%, rgba(255,228,232,.35), transparent 60%),
+        linear-gradient(180deg, #fff 0%, #ffe6ee 60%, #fff 100%);
+    }
+    /* Mawar dekoratif (SVG) sudut atas & bawah */
+    .rose-top, .rose-bottom {
+      position: absolute; inset: 0; pointer-events: none;
+      background-repeat: no-repeat; background-size: 380px;
+      opacity: .25; filter: blur(.2px);
+    }
+    .rose-top { background-position: right -40px top -40px; }
+    .rose-bottom { background-position: left -40px bottom -40px; transform: scaleX(-1); }
+    .rose-top { background-image: url('data:image/svg+xml;utf8,<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="%23ff6b9c" offset="0"/><stop stop-color="%23ffb6c1" offset="1"/></linearGradient></defs><g fill="url(%23g)" opacity=".85"><path d="M256 60c90 0 164 74 164 164s-74 164-164 164S92 314 92 224 166 60 256 60z"/><path d="M196 210c40-48 116-50 160 0-44 52-120 50-160 0z" opacity=".9"/><circle cx="210" cy="205" r="18"/><circle cx="302" cy="205" r="18"/></g></svg>'); }
+    .rose-bottom { background-image: url('data:image/svg+xml;utf8,<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="g2" x1="0" y1="0" x2="1" y2="1"><stop stop-color="%23ffa4c2" offset="0"/><stop stop-color="%23ffd3df" offset="1"/></linearGradient></defs><g fill="url(%23g2)" opacity=".85"><path d="M256 80c70 0 128 58 128 128s-58 128-128 128S128 278 128 208s58-128 128-128z"/><path d="M176 240c56 36 104 36 160 0-56-36-104-36-160 0z" opacity=".9"/></g></svg>'); }
+  </style>
 </head>
-<body class="bg-slate-50 text-slate-800">
-  <div class="min-h-screen bg-gradient-to-b from-slate-50 to-white">
-    <div class="max-w-4xl mx-auto px-4 py-10">
-      <header class="mb-8">
-        <h1 class="text-3xl md:text-4xl font-bold tracking-tight">Buku Tamu → Telegram</h1>
-        <p class="text-slate-600">Data dikirim aman via server Vercel.</p>
+<body class="text-rose-900/90 selection:bg-pink-200/60">
+  <div class="rose-top"></div>
+  <div class="rose-bottom"></div>
+
+  <div class="min-h-screen">
+    <div class="max-w-4xl mx-auto px-4 py-10 md:py-14">
+      <!-- HERO -->
+      <header class="relative overflow-hidden rounded-3xl bg-white/70 backdrop-blur border border-rose-100 shadow-sm">
+        <div class="p-8 md:p-10">
+          <h1 class="text-3xl md:text-5xl font-extrabold tracking-tight text-rose-700 drop-shadow-sm">
+            Ruang Tanda & Kasih
+          </h1>
+          <p class="mt-2 text-rose-700/70 text-sm md:text-base">
+            Tinggalkan salam hangat & doa terbaik Anda.
+          </p>
+        </div>
       </header>
 
-      <div id="alert" class="hidden mb-4 rounded-xl border px-4 py-3 text-sm"></div>
+      <!-- ALERT -->
+      <div id="alert" class="hidden mt-6 mb-4 rounded-2xl border px-4 py-3 text-sm"></div>
 
-      <form id="guestForm" class="bg-white rounded-2xl shadow-sm border p-5 md:p-6">
+      <!-- KARTU FORM -->
+      <form id="guestForm" class="mt-6 bg-white/80 backdrop-blur rounded-3xl shadow-sm border border-rose-100 p-5 md:p-6">
         <div class="grid md:grid-cols-2 gap-4">
           <div>
-            <label class="block text-sm font-medium mb-1">Nama <span class="text-rose-600">*</span></label>
+            <label class="block text-sm font-medium mb-1 text-rose-800">Nama <span class="text-rose-600">*</span></label>
             <input id="nama" required placeholder="Nama lengkap"
-                   class="w-full rounded-xl border px-3 py-2 outline-none focus:ring-2 focus:ring-sky-200" />
+                   class="w-full rounded-2xl border border-rose-200/70 px-3 py-2 outline-none focus:ring-4 focus:ring-pink-200/60" />
           </div>
 
           <div>
-            <label class="block text-sm font-medium mb-1">Kehadiran <span class="text-rose-600">*</span></label>
+            <label class="block text-sm font-medium mb-1 text-rose-800">Kehadiran <span class="text-rose-600">*</span></label>
             <select id="kehadiran" required
-                    class="w-full rounded-xl border px-3 py-2 outline-none focus:ring-2 focus:ring-sky-200">
+                    class="w-full rounded-2xl border border-rose-200/70 px-3 py-2 outline-none focus:ring-4 focus:ring-pink-200/60">
               <option value="">-- pilih --</option>
               <option>Hadir</option>
               <option>Izin</option>
@@ -36,67 +68,73 @@
           </div>
 
           <div>
-            <label class="block text-sm font-medium mb-1">Jumlah Tamu <span class="text-rose-600">*</span></label>
+            <label class="block text-sm font-medium mb-1 text-rose-800">Jumlah Tamu <span class="text-rose-600">*</span></label>
             <input id="jumlah" type="number" min="1" value="1" required
-                   class="w-full rounded-xl border px-3 py-2 outline-none focus:ring-2 focus:ring-sky-200" />
+                   class="w-full rounded-2xl border border-rose-200/70 px-3 py-2 outline-none focus:ring-4 focus:ring-pink-200/60" />
           </div>
 
           <div>
-            <label class="block text-sm font-medium mb-1">Kontak <span class="text-rose-600">*</span></label>
-            <input id="kontak" required placeholder="Nomor WA / Email / @Instagram"
-                   class="w-full rounded-xl border px-3 py-2 outline-none focus:ring-2 focus:ring-sky-200" />
+            <label class="block text-sm font-medium mb-1 text-rose-800">Nomor WA <span class="text-rose-600">*</span></label>
+            <input id="kontak" required placeholder="Contoh: 0821xxxxxxx"
+                   class="w-full rounded-2xl border border-rose-200/70 px-3 py-2 outline-none focus:ring-4 focus:ring-pink-200/60" />
           </div>
 
           <div class="md:col-span-2">
-            <label class="block text-sm font-medium mb-1">Ucapan</label>
-            <textarea id="ucapan" rows="4" placeholder="Tulis ucapan & doa terbaik di sini…"
-                      class="w-full rounded-xl border px-3 py-2 outline-none focus:ring-2 focus:ring-sky-200"></textarea>
+            <label class="block text-sm font-medium mb-1 text-rose-800">Tulis Pesan & Do'a terbaik untuk kedua mempelai</label>
+            <textarea id="ucapan" rows="4" placeholder="Tulis pesan & do'a…"
+                      class="w-full rounded-2xl border border-rose-200/70 px-3 py-2 outline-none focus:ring-4 focus:ring-pink-200/60"></textarea>
           </div>
         </div>
 
-        <div class="flex gap-3 pt-4">
-          <button type="submit" class="rounded-2xl bg-sky-600 text-white px-4 py-2 hover:bg-sky-700 shadow">Kirim</button>
-          <button type="button" id="resetBtn" class="rounded-2xl border px-4 py-2 hover:bg-slate-50">Reset</button>
+        <div class="flex gap-3 pt-5">
+          <button type="submit" class="rounded-2xl bg-rose-600 text-white px-5 py-2.5 hover:bg-rose-700 shadow-md shadow-rose-200 transition">
+            Kirim
+          </button>
+          <button type="button" id="resetBtn" class="rounded-2xl border border-rose-200 px-5 py-2.5 hover:bg-rose-50">
+            Reset
+          </button>
         </div>
       </form>
 
-      <section class="mt-10 bg-white rounded-2xl shadow-sm border p-5 md:p-6" id="donasi">
-        <h2 class="text-lg font-semibold mb-2">Kirim Uang / Donasi</h2>
-        <p class="text-sm text-slate-600 mb-4">Pilih metode transfer:</p>
+      <!-- KARTU DONASI -->
+      <section class="mt-8 bg-white/80 backdrop-blur rounded-3xl shadow-sm border border-rose-100 p-5 md:p-6" id="donasi">
+        <h2 class="text-lg font-semibold text-rose-800 mb-2">Kirim Tanda Kasih</h2>
+        <p class="text-sm text-rose-700/70 mb-4">Pilih metode transfer:</p>
 
         <div class="space-y-3">
           <label class="flex items-center gap-2">
-            <input type="radio" name="payMethod" value="bsi" checked class="text-sky-600 focus:ring-sky-500">
+            <input type="radio" name="payMethod" value="bsi" checked class="text-rose-600 focus:ring-rose-500">
             <span>Transfer Bank (BSI)</span>
           </label>
           <label class="flex items-center gap-2">
-            <input type="radio" name="payMethod" value="dana" class="text-sky-600 focus:ring-sky-500">
+            <input type="radio" name="payMethod" value="dana" class="text-rose-600 focus:ring-rose-500">
             <span>Dana</span>
           </label>
           <label class="flex items-center gap-2">
-            <input type="radio" name="payMethod" value="ovo" class="text-sky-600 focus:ring-sky-500">
+            <input type="radio" name="payMethod" value="ovo" class="text-rose-600 focus:ring-rose-500">
             <span>OVO</span>
           </label>
           <label class="flex items-center gap-2">
-            <input type="radio" name="payMethod" value="gopay" class="text-sky-600 focus:ring-sky-500">
+            <input type="radio" name="payMethod" value="gopay" class="text-rose-600 focus:ring-rose-500">
             <span>GoPay</span>
           </label>
         </div>
 
-        <div id="payDetail" class="mt-4 p-4 rounded-xl border bg-slate-50 text-sm">
+        <div id="payDetail" class="mt-4 p-4 rounded-2xl border border-rose-200 bg-rose-50/50 text-sm">
           <p>Pilih metode di atas untuk melihat detail transfer.</p>
         </div>
       </section>
     </div>
   </div>
 
-  <div id="successModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-    <div class="bg-white w-full max-w-md rounded-2xl shadow-xl p-6">
-      <h3 class="text-lg font-semibold mb-2">Terkirim 🎉</h3>
-      <pre id="successSummary" class="text-sm bg-slate-50 border rounded-lg p-3 whitespace-pre-wrap mb-4"></pre>
+  <!-- MODAL SUKSES -->
+  <div id="successModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/30">
+    <div class="bg-white w-full max-w-md rounded-3xl shadow-xl p-6 border border-rose-100">
+      <h3 class="text-lg font-semibold mb-2 text-rose-800">Terkirim 🎉</h3>
+      <pre id="successSummary" class="text-sm bg-rose-50 border border-rose-100 rounded-xl p-3 whitespace-pre-wrap mb-4 text-rose-900/90"></pre>
       <div class="flex justify-end gap-2">
-        <a href="#donasi" id="goDonate" class="rounded-xl border px-4 py-2 hover:bg-slate-50">Kirim Uang</a>
-        <button id="closeModal" class="rounded-xl bg-sky-600 text-white px-4 py-2 hover:bg-sky-700">Tutup</button>
+        <a href="#donasi" id="goDonate" class="rounded-xl border border-rose-200 px-4 py-2 hover:bg-rose-50">Kirim Tanda Kasih</a>
+        <button id="closeModal" class="rounded-xl bg-rose-600 text-white px-4 py-2 hover:bg-rose-700">Tutup</button>
       </div>
     </div>
   </div>
@@ -108,8 +146,10 @@
     function showAlert(text, ok = true) {
       alertBox.textContent = text;
       alertBox.className =
-        "mb-4 rounded-xl border px-4 py-3 text-sm " +
-        (ok ? "border-emerald-200 bg-emerald-50 text-emerald-800" : "border-rose-200 bg-rose-50 text-rose-800");
+        "mt-6 mb-4 rounded-2xl border px-4 py-3 text-sm " +
+        (ok
+          ? "border-emerald-200 bg-emerald-50 text-emerald-800"
+          : "border-rose-200 bg-rose-50 text-rose-800");
       alertBox.classList.remove("hidden");
       setTimeout(() => alertBox.classList.add("hidden"), 2400);
     }
@@ -127,7 +167,7 @@
     function validate(d) {
       if (!d.nama) return "Nama wajib diisi";
       if (!d.kehadiran) return "Kehadiran wajib diisi";
-      if (!d.kontak) return "Kontak wajib diisi";
+      if (!d.kontak) return "Nomor WA wajib diisi";
       const j = parseInt(d.jumlah, 10);
       if (!Number.isFinite(j) || j < 1) return "Jumlah minimal 1";
       return "";
@@ -138,12 +178,13 @@
         `Nama: ${d.nama}`,
         `Kehadiran: ${d.kehadiran}`,
         `Jumlah: ${parseInt(d.jumlah,10)||1}`,
-        d.kontak ? `Kontak: ${d.kontak}` : "",
-        d.ucapan ? `Ucapan: ${d.ucapan}` : "",
+        d.kontak ? `Nomor WA: ${d.kontak}` : "",
+        d.ucapan ? `Pesan/Do'a: ${d.ucapan}` : "",
       ].filter(Boolean);
       return lines.join("\n");
     }
 
+    // Submit Buku Tamu
     document.getElementById("guestForm").addEventListener("submit", async (e) => {
       e.preventDefault();
       const data = currentData();
@@ -168,6 +209,7 @@
           return showAlert("Gagal mengirim: " + (t.error || res.statusText), false);
         }
 
+        // reset
         $("nama").value = "";
         $("kehadiran").value = "";
         $("jumlah").value = "1";
@@ -198,25 +240,32 @@
       if (sec) sec.scrollIntoView({ behavior: "smooth" });
     });
 
+    // Detail Tanda Kasih
     const paymentDetails = {
       bsi: "Bank Syariah Indonesia (BSI)\nNo.Rek: 7195450433\nA.N: Jabir",
-      dana: "Link Dana: https://link.dana.id/minta?full_url=https://qr.dana.id/v1/281012012024042601932781\natau No.HP: 082122346705",
+      dana: `Link Dana: <a href="https://link.dana.id/minta?full_url=https://qr.dana.id/v1/281012012024042601932781" target="_blank" rel="noopener">Buka tautan</a><br>atau No.HP: 082122346705`,
       ovo: "No. OVO: 082122346705\nNama: Jabir",
-      gopay: "No. GoPay: 082122346705\nNama: jabir"
+      gopay: "No. GoPay: 082122346705\nNama: Jabir"
     };
 
     const radios = document.querySelectorAll("input[name='payMethod']");
     const detailBox = document.getElementById("payDetail");
 
     function renderPayDetail(key) {
+      const content = paymentDetails[key];
       detailBox.innerHTML = `
         <div class="flex items-start justify-between gap-3">
-          <pre class="whitespace-pre-wrap text-sm">${paymentDetails[key]}</pre>
-          <button class="shrink-0 rounded-xl border px-3 py-1.5 hover:bg-slate-100" id="copyBtn">Salin</button>
+          <div class="text-sm whitespace-pre-wrap">${content}</div>
+          <button class="shrink-0 rounded-xl border border-rose-200 px-3 py-1.5 hover:bg-rose-50" id="copyBtn">Salin</button>
         </div>`;
       document.getElementById("copyBtn").onclick = async () => {
-        try { await navigator.clipboard.writeText(paymentDetails[key]); showAlert("Detail disalin."); }
-        catch { showAlert("Gagal menyalin.", false); }
+        try {
+          const plain = content.replace(/<[^>]+>/g, "");
+          await navigator.clipboard.writeText(plain);
+          showAlert("Detail disalin.");
+        } catch {
+          showAlert("Gagal menyalin.", false);
+        }
       };
     }
 
