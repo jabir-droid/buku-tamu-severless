@@ -14,27 +14,18 @@
         <p class="text-slate-600">Data dikirim aman via server Vercel.</p>
       </header>
 
-      <!-- ALERT (fallback) -->
       <div id="alert" class="hidden mb-4 rounded-xl border px-4 py-3 text-sm"></div>
 
-      <!-- FORM -->
       <form id="guestForm" class="bg-white rounded-2xl shadow-sm border p-5 md:p-6">
         <div class="grid md:grid-cols-2 gap-4">
-          <!-- Nama -->
           <div>
-            <label class="block text-sm font-medium mb-1">
-              Nama <span class="text-rose-600">*</span>
-            </label>
-            <input id="nama" required
-                   class="w-full rounded-xl border px-3 py-2 outline-none focus:ring-2 focus:ring-sky-200"
-                   placeholder="Nama lengkap" />
+            <label class="block text-sm font-medium mb-1">Nama <span class="text-rose-600">*</span></label>
+            <input id="nama" required placeholder="Nama lengkap"
+                   class="w-full rounded-xl border px-3 py-2 outline-none focus:ring-2 focus:ring-sky-200" />
           </div>
 
-          <!-- Kehadiran -->
           <div>
-            <label class="block text-sm font-medium mb-1">
-              Kehadiran <span class="text-rose-600">*</span>
-            </label>
+            <label class="block text-sm font-medium mb-1">Kehadiran <span class="text-rose-600">*</span></label>
             <select id="kehadiran" required
                     class="w-full rounded-xl border px-3 py-2 outline-none focus:ring-2 focus:ring-sky-200">
               <option value="">-- pilih --</option>
@@ -44,90 +35,68 @@
             </select>
           </div>
 
-          <!-- Jumlah Tamu -->
           <div>
-            <label class="block text-sm font-medium mb-1">
-              Jumlah Tamu <span class="text-rose-600">*</span>
-            </label>
+            <label class="block text-sm font-medium mb-1">Jumlah Tamu <span class="text-rose-600">*</span></label>
             <input id="jumlah" type="number" min="1" value="1" required
                    class="w-full rounded-xl border px-3 py-2 outline-none focus:ring-2 focus:ring-sky-200" />
           </div>
 
-          <!-- Kontak -->
           <div>
-            <label class="block text-sm font-medium mb-1">
-              Kontak <span class="text-rose-600">*</span>
-            </label>
-            <input id="kontak" required
-                   class="w-full rounded-xl border px-3 py-2 outline-none focus:ring-2 focus:ring-sky-200"
-                   placeholder="Nomor WA / Email / @Instagram" />
+            <label class="block text-sm font-medium mb-1">Kontak <span class="text-rose-600">*</span></label>
+            <input id="kontak" required placeholder="Nomor WA / Email / @Instagram"
+                   class="w-full rounded-xl border px-3 py-2 outline-none focus:ring-2 focus:ring-sky-200" />
           </div>
 
-          <!-- Ucapan -->
           <div class="md:col-span-2">
             <label class="block text-sm font-medium mb-1">Ucapan</label>
-            <textarea id="ucapan" rows="4"
-                      class="w-full rounded-xl border px-3 py-2 outline-none focus:ring-2 focus:ring-sky-200"
-                      placeholder="Tulis ucapan & doa terbaik di sini..."></textarea>
+            <textarea id="ucapan" rows="4" placeholder="Tulis ucapan & doa terbaik di sini…"
+                      class="w-full rounded-xl border px-3 py-2 outline-none focus:ring-2 focus:ring-sky-200"></textarea>
           </div>
         </div>
 
         <div class="flex gap-3 pt-4">
-          <button type="submit"
-                  class="rounded-2xl bg-sky-600 text-white px-4 py-2 hover:bg-sky-700 shadow">
-            Kirim
-          </button>
-          <button type="button" id="resetBtn"
-                  class="rounded-2xl border px-4 py-2 hover:bg-slate-50">
-            Reset
-          </button>
+          <button type="submit" class="rounded-2xl bg-sky-600 text-white px-4 py-2 hover:bg-sky-700 shadow">Kirim</button>
+          <button type="button" id="resetBtn" class="rounded-2xl border px-4 py-2 hover:bg-slate-50">Reset</button>
         </div>
       </form>
-      <!-- /FORM -->
 
-      <!-- KIRIM UANG -->
-      <section class="mt-10 bg-white rounded-2xl shadow-sm border p-5 md:p-6">
-        <h2 class="text-lg font-semibold mb-2">Ingin kirim uang?</h2>
-        <p class="text-sm text-slate-600 mb-4">
-          Kamu bisa transfer lewat tombol di bawah atau scan QRIS. Terima kasih 🙏
-        </p>
+      <section class="mt-10 bg-white rounded-2xl shadow-sm border p-5 md:p-6" id="donasi">
+        <h2 class="text-lg font-semibold mb-2">Kirim Uang / Donasi</h2>
+        <p class="text-sm text-slate-600 mb-4">Pilih metode transfer:</p>
 
-        <div class="flex flex-wrap gap-3 mb-4">
-          <!-- GANTI href= dengan link asli kamu -->
-          <a href="https://link.dana.id/mintadana/CONTOH" target="_blank" rel="noopener"
-             class="rounded-xl border px-4 py-2 hover:bg-slate-50">Dana</a>
-          <a href="https://saweria.co/CONTOH" target="_blank" rel="noopener"
-             class="rounded-xl border px-4 py-2 hover:bg-slate-50">Saweria</a>
-          <a href="https://trakteer.id/CONTOH/tip" target="_blank" rel="noopener"
-             class="rounded-xl border px-4 py-2 hover:bg-slate-50">Trakteer</a>
-          <button id="copyRek" type="button"
-             class="rounded-xl border px-4 py-2 hover:bg-slate-50">Salin Rekening</button>
+        <div class="space-y-3">
+          <label class="flex items-center gap-2">
+            <input type="radio" name="payMethod" value="bsi" checked class="text-sky-600 focus:ring-sky-500">
+            <span>Transfer Bank (BSI)</span>
+          </label>
+          <label class="flex items-center gap-2">
+            <input type="radio" name="payMethod" value="dana" class="text-sky-600 focus:ring-sky-500">
+            <span>Dana</span>
+          </label>
+          <label class="flex items-center gap-2">
+            <input type="radio" name="payMethod" value="ovo" class="text-sky-600 focus:ring-sky-500">
+            <span>OVO</span>
+          </label>
+          <label class="flex items-center gap-2">
+            <input type="radio" name="payMethod" value="gopay" class="text-sky-600 focus:ring-sky-500">
+            <span>GoPay</span>
+          </label>
         </div>
 
-        <!-- Ganti src QRIS dengan gambar kamu sendiri (opsional) -->
-        <div class="rounded-xl border p-4 flex items-center gap-4">
-          <img id="qrisImg" src="" alt="QRIS" class="w-36 h-36 bg-slate-100 rounded-md object-contain">
-          <div class="text-sm text-slate-600">
-            <p class="mb-1">QRIS (opsional). Taruh URL gambar QRIS kamu di variabel <code>QRIS_URL</code> di bawah.</p>
-            <p>Atau klik tombol metode di atas.</p>
-          </div>
+        <div id="payDetail" class="mt-4 p-4 rounded-xl border bg-slate-50 text-sm">
+          <p>Pilih metode di atas untuk melihat detail transfer.</p>
         </div>
       </section>
-      <!-- /KIRIM UANG -->
     </div>
   </div>
 
-  <!-- MODAL SUKSES -->
-  <div id="successModal"
-       class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+  <div id="successModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40">
     <div class="bg-white w-full max-w-md rounded-2xl shadow-xl p-6">
       <h3 class="text-lg font-semibold mb-2">Terkirim 🎉</h3>
       <pre id="successSummary" class="text-sm bg-slate-50 border rounded-lg p-3 whitespace-pre-wrap mb-4"></pre>
       <div class="flex justify-end gap-2">
-        <a href="#donate" id="goDonate"
-           class="rounded-xl border px-4 py-2 hover:bg-slate-50">Kirim Uang</a>
-        <button id="closeModal"
-                class="rounded-xl bg-sky-600 text-white px-4 py-2 hover:bg-sky-700">Tutup</button>
+        <a href="#donasi" id="goDonate" class="rounded-xl border px-4 py-2 hover:bg-slate-50">Kirim Uang</a>
+        <button id="closeModal" class="rounded-xl bg-sky-600 text-white px-4 py-2 hover:bg-sky-700">Tutup</button>
       </div>
     </div>
   </div>
@@ -136,24 +105,11 @@
     const $ = (id) => document.getElementById(id);
     const alertBox = $("alert");
 
-    // ====== CONFIG KIRIM UANG (ganti sesuai punyamu) ======
-    const REKENING_TEXT = "BCA 123456789 a.n. Nama Kamu";
-    const QRIS_URL = ""; // contoh: "https://domainmu.com/qris.png"
-    // =====================================================
-
-    if (QRIS_URL) {
-      const img = $("qrisImg");
-      img.src = QRIS_URL;
-      img.classList.remove("bg-slate-100");
-    }
-
     function showAlert(text, ok = true) {
       alertBox.textContent = text;
       alertBox.className =
         "mb-4 rounded-xl border px-4 py-3 text-sm " +
-        (ok
-          ? "border-emerald-200 bg-emerald-50 text-emerald-800"
-          : "border-rose-200 bg-rose-50 text-rose-800");
+        (ok ? "border-emerald-200 bg-emerald-50 text-emerald-800" : "border-rose-200 bg-rose-50 text-rose-800");
       alertBox.classList.remove("hidden");
       setTimeout(() => alertBox.classList.add("hidden"), 2400);
     }
@@ -188,7 +144,7 @@
       return lines.join("\n");
     }
 
-    $("guestForm").addEventListener("submit", async (e) => {
+    document.getElementById("guestForm").addEventListener("submit", async (e) => {
       e.preventDefault();
       const data = currentData();
       const err = validate(data);
@@ -212,14 +168,12 @@
           return showAlert("Gagal mengirim: " + (t.error || res.statusText), false);
         }
 
-        // reset form
         $("nama").value = "";
         $("kehadiran").value = "";
         $("jumlah").value = "1";
         $("kontak").value = "";
         $("ucapan").value = "";
 
-        // tampilkan modal sukses + ringkasan
         $("successSummary").textContent = buildSummary(data);
         $("successModal").classList.remove("hidden");
       } catch {
@@ -238,22 +192,40 @@
     $("closeModal").addEventListener("click", () => {
       $("successModal").classList.add("hidden");
     });
-
     $("goDonate").addEventListener("click", () => {
       $("successModal").classList.add("hidden");
-      // scroll ke bagian donasi
-      const sec = document.querySelector("section.mt-10");
+      const sec = document.getElementById("donasi");
       if (sec) sec.scrollIntoView({ behavior: "smooth" });
     });
 
-    $("copyRek").addEventListener("click", async () => {
-      try {
-        await navigator.clipboard.writeText(REKENING_TEXT);
-        showAlert("Nomor rekening disalin.", true);
-      } catch {
-        showAlert("Gagal menyalin. Salin manual: " + REKENING_TEXT, false);
-      }
-    });
+    const paymentDetails = {
+      bsi: "Bank Syariah Indonesia (BSI)\nNo.Rek: 7195450433\nA.N: Jabir",
+      dana: "Link Dana: https://link.dana.id/minta?full_url=https://qr.dana.id/v1/281012012024042601932781\natau No.HP: 082122346705",
+      ovo: "No. OVO: 082122346705\nNama: Jabir",
+      gopay: "No. GoPay: 082122346705\nNama: jabir"
+    };
+
+    const radios = document.querySelectorAll("input[name='payMethod']");
+    const detailBox = document.getElementById("payDetail");
+
+    function renderPayDetail(key) {
+      detailBox.innerHTML = `
+        <div class="flex items-start justify-between gap-3">
+          <pre class="whitespace-pre-wrap text-sm">${paymentDetails[key]}</pre>
+          <button class="shrink-0 rounded-xl border px-3 py-1.5 hover:bg-slate-100" id="copyBtn">Salin</button>
+        </div>`;
+      document.getElementById("copyBtn").onclick = async () => {
+        try { await navigator.clipboard.writeText(paymentDetails[key]); showAlert("Detail disalin."); }
+        catch { showAlert("Gagal menyalin.", false); }
+      };
+    }
+
+    radios.forEach(r => r.addEventListener("change", () => {
+      const val = document.querySelector("input[name='payMethod']:checked").value;
+      renderPayDetail(val);
+    }));
+
+    renderPayDetail("bsi");
   </script>
 </body>
 </html>
