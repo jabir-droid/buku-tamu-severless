@@ -4,8 +4,10 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Ruang ucapan & Kasih</title>
+  <meta name="robots" content="index,follow" />
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
+    /* Tema pink + pattern mawar halus; teks default hitam */
     body {
       color: #000;
       background:
@@ -171,7 +173,7 @@
     </div>
   </div>
 
-  <!-- MODAL SUKSES -->
+  <!-- MODAL SUKSES (dipakai untuk ucapan & konfirmasi) -->
   <div id="successModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/30">
     <div class="bg-white w-full max-w-md rounded-3xl shadow-xl p-6 border border-rose-100">
       <h3 class="text-lg font-semibold mb-2">Terkirim 🎉</h3>
@@ -198,7 +200,7 @@
       setTimeout(() => alertBox.classList.add("hidden"), 2400);
     }
 
-    // ==== FORM UCAPAN ====
+    /* ====== FORM UCAPAN ====== */
     function currentData() {
       return {
         nama: $("nama").value.trim(),
@@ -281,7 +283,7 @@
       if (sec) sec.scrollIntoView({ behavior: "smooth" });
     });
 
-    // ==== DETAIL METODE TANDA KASIH (BSI / OVO) ====
+    /* ====== DETAIL METODE TANDA KASIH (BSI / OVO) ====== */
     const paymentDetails = {
       bsi: "Bank Syariah Indonesia (BSI)\nNo.Rek: 7195450433\nA.N: Jabir",
       ovo: "No. OVO: 082122346705\nNama: Jabir"
@@ -311,7 +313,7 @@
     }));
     renderPayDetail("bsi");
 
-    // ==== FORM KONFIRMASI PEMBAYARAN ====
+    /* ====== FORM KONFIRMASI PEMBAYARAN ====== */
     function pcData() {
       return {
         nama: $("pc_nama").value.trim(),
@@ -348,12 +350,10 @@
       if (err) return showAlert(err, false);
 
       try {
-        // kirim ke endpoint yang sama, dengan payload khusus konfirmasi
         const res = await fetch("/api/send-telegram", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            // tag kecil agar mudah dibaca saat masuk Telegram
             tipe: "konfirmasi_pembayaran",
             nama_pengirim: d.nama,
             metode: d.metode,
@@ -368,14 +368,12 @@
           return showAlert("Konfirmasi gagal dikirim: " + (t.error || res.statusText), false);
         }
 
-        // reset form
         $("pc_nama").value = "";
         $("pc_metode").value = "";
         $("pc_nominal").value = "";
         $("pc_tanggal").value = "";
         $("pc_catatan").value = "";
 
-        // tampilkan modal dengan ringkasan
         $("successSummary").textContent = pcSummary(d);
         $("successModal").classList.remove("hidden");
       } catch {
@@ -391,7 +389,7 @@
       $("pc_catatan").value = "";
     });
 
-    // set default tanggal = hari ini
+    // set default tanggal hari ini
     (function setToday() {
       const el = $("pc_tanggal");
       if (!el) return;
