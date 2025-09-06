@@ -16,39 +16,73 @@
 
       <div id="alert" class="hidden mb-4 rounded-xl border px-4 py-3 text-sm"></div>
 
+      <!-- FORM -->
       <form id="guestForm" class="bg-white rounded-2xl shadow-sm border p-5 md:p-6">
         <div class="grid md:grid-cols-2 gap-4">
+          <!-- Nama -->
           <div>
-            <label class="block text-sm font-medium mb-1">Nama <span class="text-rose-600">*</span></label>
-            <input id="nama" required class="w-full rounded-xl border px-3 py-2 outline-none focus:ring-2 focus:ring-sky-200" />
+            <label class="block text-sm font-medium mb-1">
+              Nama <span class="text-rose-600">*</span>
+            </label>
+            <input id="nama" required
+                   class="w-full rounded-xl border px-3 py-2 outline-none focus:ring-2 focus:ring-sky-200"
+                   placeholder="Nama lengkap" />
           </div>
+
+          <!-- Kehadiran -->
           <div>
-            <label class="block text-sm font-medium mb-1">Kehadiran <span class="text-rose-600">*</span></label>
-            <select id="kehadiran" class="w-full rounded-xl border px-3 py-2 outline-none focus:ring-2 focus:ring-sky-200">
+            <label class="block text-sm font-medium mb-1">
+              Kehadiran <span class="text-rose-600">*</span>
+            </label>
+            <select id="kehadiran" required
+                    class="w-full rounded-xl border px-3 py-2 outline-none focus:ring-2 focus:ring-sky-200">
+              <option value="">-- pilih --</option>
               <option>Hadir</option>
               <option>Izin</option>
               <option>Belum Pasti</option>
             </select>
           </div>
+
+          <!-- Jumlah Tamu -->
           <div>
-            <label class="block text-sm font-medium mb-1">Jumlah Tamu</label>
-            <input id="jumlah" type="number" min="1" value="1" class="w-full rounded-xl border px-3 py-2 outline-none focus:ring-2 focus:ring-sky-200" />
+            <label class="block text-sm font-medium mb-1">
+              Jumlah Tamu <span class="text-rose-600">*</span>
+            </label>
+            <input id="jumlah" type="number" min="1" value="1" required
+                   class="w-full rounded-xl border px-3 py-2 outline-none focus:ring-2 focus:ring-sky-200" />
           </div>
+
+          <!-- Kontak -->
           <div>
-            <label class="block text-sm font-medium mb-1">Kontak (opsional)</label>
-            <input id="kontak" class="w-full rounded-xl border px-3 py-2 outline-none focus:ring-2 focus:ring-sky-200" />
+            <label class="block text-sm font-medium mb-1">
+              Kontak <span class="text-rose-600">*</span>
+            </label>
+            <input id="kontak" required
+                   class="w-full rounded-xl border px-3 py-2 outline-none focus:ring-2 focus:ring-sky-200"
+                   placeholder="Nomor WA / Email / @Instagram" />
           </div>
+
+          <!-- Ucapan -->
           <div class="md:col-span-2">
             <label class="block text-sm font-medium mb-1">Ucapan</label>
-            <textarea id="ucapan" rows="4" class="w-full rounded-xl border px-3 py-2 outline-none focus:ring-2 focus:ring-sky-200"></textarea>
+            <textarea id="ucapan" rows="4"
+                      class="w-full rounded-xl border px-3 py-2 outline-none focus:ring-2 focus:ring-sky-200"
+                      placeholder="Tulis ucapan & doa terbaik di sini..."></textarea>
           </div>
         </div>
 
         <div class="flex gap-3 pt-4">
-          <button type="submit" class="rounded-2xl bg-sky-600 text-white px-4 py-2 hover:bg-sky-700 shadow">Kirim</button>
-          <button type="button" id="resetBtn" class="rounded-2xl border px-4 py-2 hover:bg-slate-50">Reset</button>
+          <button type="submit"
+                  class="rounded-2xl bg-sky-600 text-white px-4 py-2 hover:bg-sky-700 shadow">
+            Kirim
+          </button>
+          <button type="button" id="resetBtn"
+                  class="rounded-2xl border px-4 py-2 hover:bg-slate-50">
+            Reset
+          </button>
         </div>
       </form>
+      <!-- /FORM -->
     </div>
   </div>
 
@@ -60,7 +94,9 @@
       alertBox.textContent = text;
       alertBox.className =
         "mb-4 rounded-xl border px-4 py-3 text-sm " +
-        (ok ? "border-emerald-200 bg-emerald-50 text-emerald-800" : "border-rose-200 bg-rose-50 text-rose-800");
+        (ok
+          ? "border-emerald-200 bg-emerald-50 text-emerald-800"
+          : "border-rose-200 bg-rose-50 text-rose-800");
       alertBox.classList.remove("hidden");
       setTimeout(() => alertBox.classList.add("hidden"), 2200);
     }
@@ -78,6 +114,7 @@
     function validate(d) {
       if (!d.nama) return "Nama wajib diisi";
       if (!d.kehadiran) return "Kehadiran wajib diisi";
+      if (!d.kontak) return "Kontak wajib diisi";
       const j = parseInt(d.jumlah, 10);
       if (!Number.isFinite(j) || j < 1) return "Jumlah minimal 1";
       return "";
@@ -107,11 +144,13 @@
           return showAlert("Gagal mengirim: " + (t.error || res.statusText), false);
         }
 
+        // reset form
         $("nama").value = "";
-        $("kehadiran").value = "Hadir";
+        $("kehadiran").value = "";
         $("jumlah").value = "1";
         $("kontak").value = "";
         $("ucapan").value = "";
+
         showAlert("Terkirim ke Telegram.");
       } catch {
         showAlert("Terjadi kesalahan jaringan.", false);
@@ -120,7 +159,7 @@
 
     $("resetBtn").addEventListener("click", () => {
       $("nama").value = "";
-      $("kehadiran").value = "Hadir";
+      $("kehadiran").value = "";
       $("jumlah").value = "1";
       $("kontak").value = "";
       $("ucapan").value = "";
