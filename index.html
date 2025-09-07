@@ -235,69 +235,98 @@
       if (sec) sec.scrollIntoView({ behavior: "smooth" });
     });
 
-    /* ====== DETAIL METODE TANDA KASIH (BSI / BRI / OVO) ====== */
+    /* ================== PEMBAYARAN ================== */
+
+    // Deteksi platform
+    const isIOS = () => /iPad|iPhone|iPod/i.test(navigator.userAgent);
+    const isAndroid = () => /Android/i.test(navigator.userAgent);
+
+    // Helper buka app dengan fallback ke store
+    function openApp({ androidIntent, iosScheme, playStore, appStore }) {
+      const t0 = Date.now();
+
+      if (isAndroid() && androidIntent) {
+        window.location.href = androidIntent;
+        setTimeout(() => {
+          if (Date.now() - t0 < 1600 && playStore) window.location.href = playStore;
+        }, 1200);
+        return;
+      }
+
+      if (isIOS() && iosScheme) {
+        window.location.href = iosScheme;
+        setTimeout(() => {
+          if (Date.now() - t0 < 1600 && appStore) window.location.href = appStore;
+        }, 1200);
+        return;
+      }
+
+      if (playStore) window.open(playStore, "_blank");
+    }
+
+    // Data pembayaran
     const paymentDetails = {
       bsi: {
+        title: "Transfer Bank (BSI)",
         lines: [
           "Bank Syariah Indonesia (BSI)",
           "No.Rek: 7290297359",
           "A.N: Muhammad Nirwan Ghozaly"
         ],
-        // pakai link store generik; deep-link mBanking biasanya tidak terdokumentasi publik
         playStore: "https://play.google.com/store/search?q=BSI%20Mobile",
-        appStore: "https://apps.apple.com/id/search?term=BSI%20Mobile",
-        deepLink: null
+        appStore: "https://apps.apple.com/id/search?term=BSI%20Mobile"
       },
       bri: {
+        title: "Transfer Bank (BRI)",
         lines: [
           "Bank Rakyat Indonesia (BRI)",
           "No.Rek: 0184 0102 1592 539",
           "A.N: Ahmad Sopan"
         ],
         playStore: "https://play.google.com/store/search?q=BRImo",
-        appStore: "https://apps.apple.com/id/search?term=BRImo",
-        deepLink: null
+        appStore: "https://apps.apple.com/id/search?term=BRImo"
       },
       ovo: {
+        title: "OVO",
         lines: [
-          "OVO",
           "No. OVO: 083138020449",
           "A.N: Muhammad Nirwan Ghozaly"
         ],
-        // coba buka aplikasi OVO langsung; jika tidak terpasang, pengguna bisa pakai tombol store
-        deepLink: "ovo://transfer?phone=083138020449",
-        playStore: "https://play.google.com/store/search?q=OVO",
-        appStore: "https://apps.apple.com/id/app/ovo/id1192585550"
+        // Android: gunakan intent
+        androidIntent: "intent://transfer?phone=083138020449#Intent;scheme=ovo;package=ovo.id;end",
+        // iOS: gunakan scheme
+        iosScheme: "ovo://transfer?phone=083138020449",
+        playStore: "https://play.google.com/store/apps/details?id=ovo.id",
+        appStore: "itms-apps://itunes.apple.com/app/id1192585550"
       }
     };
 
     const radios = document.querySelectorAll("input[name='payMethod']");
     const detailBox = document.getElementById("payDetail");
 
-    function isIOS() { return /iPad|iPhone|iPod/i.test(navigator.userAgent); }
-    function isAndroid() { return /Android/i.test(navigator.userAgent); }
-
     function renderPayDetail(key) {
       const cfg = paymentDetails[key];
       const text = cfg.lines.join("\n");
 
-      // tombol dasar: Salin
+      // Tombol salin
       let buttons = `
-        <button class="rounded-xl border border-rose-200 px-3 py-1.5 hover:bg-rose-50" id="copyBtn">Salin</button>
+        <button type="button" class="rounded-xl border border-rose-200 px-3 py-1.5 hover:bg-rose-50" id="copyBtn">Salin</button>
       `;
 
-      // OVO: tombol Bayar (deep-link)
-      if (cfg.deepLink) {
+      if (key === "ovo") {
+        // OVO: tombol bayar (deep link + fallback)
         buttons += `
-          <a href="${cfg.deepLink}" class="rounded-xl bg-rose-600 text-white px-3 py-1.5 hover:bg-rose-700" id="payBtn">Bayar</a>
+          <button type="button"
+            class="rounded-xl bg-rose-600 text-white px-3 py-1.5 hover:bg-rose-700"
+            id="payBtn">Bayar via OVO</button>
         `;
-      }
-
-      // tombol buka aplikasi (via store—aman & pasti ada)
-      if (isAndroid() && cfg.playStore) {
-        buttons += `<a target="_blank" href="${cfg.playStore}" class="rounded-xl border border-rose-200 px-3 py-1.5 hover:bg-rose-50">Buka Aplikasi</a>`;
-      } else if (isIOS() && cfg.appStore) {
-        buttons += `<a target="_blank" href="${cfg.appStore}" class="rounded-xl border border-rose-200 px-3 py-1.5 hover:bg-rose-50">Buka Aplikasi</a>`;
+      } else {
+        // BSI/BRI: buka m-banking (ke Store; deep link publik tidak tersedia)
+        const storeLink = isAndroid() ? cfg.playStore : cfg.appStore;
+        buttons += `
+          <a target="_self" href="${storeLink}"
+             class="rounded-xl border border-rose-200 px-3 py-1.5 hover:bg-rose-50">Buka m-Banking</a>
+        `;
       }
 
       detailBox.innerHTML = `
@@ -307,23 +336,31 @@
         </div>
       `;
 
-      // handler salin
+      // Handler: salin
       document.getElementById("copyBtn").onclick = async () => {
-        try {
-          await navigator.clipboard.writeText(text);
-          showAlert("Detail disalin.");
-        } catch {
-          showAlert("Gagal menyalin.", false);
-        }
+        try { await navigator.clipboard.writeText(text); showAlert("Detail disalin."); }
+        catch { showAlert("Gagal menyalin.", false); }
       };
+
+      // Handler: bayar OVO
+      const payBtn = document.getElementById("payBtn");
+      if (payBtn && key === "ovo") {
+        payBtn.onclick = () => openApp({
+          androidIntent: paymentDetails.ovo.androidIntent,
+          iosScheme: paymentDetails.ovo.iosScheme,
+          playStore: paymentDetails.ovo.playStore,
+          appStore: paymentDetails.ovo.appStore
+        });
+      }
     }
 
+    // Listener pilihan metode
     radios.forEach(r => r.addEventListener("change", () => {
       const val = document.querySelector("input[name='payMethod']:checked").value;
       renderPayDetail(val);
     }));
 
-    // default tampilkan BSI
+    // Default tampilkan BSI
     renderPayDetail("bsi");
   </script>
 </body>
