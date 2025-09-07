@@ -98,7 +98,7 @@
         </div>
       </form>
 
-      <!-- PILIHAN TANDA KASIH (HANYA BSI/OVO) -->
+      <!-- PILIHAN TANDA KASIH -->
       <section class="mt-8 rounded-3xl card shadow-sm p-5 md:p-6" id="donasi">
         <h2 class="text-lg font-semibold mb-2">Kirim Tanda Kasih</h2>
         <p class="text-sm opacity-80 mb-4">Pilih metode transfer:</p>
@@ -107,6 +107,10 @@
           <label class="flex items-center gap-2">
             <input type="radio" name="payMethod" value="bsi" checked class="text-rose-600 focus:ring-rose-500">
             <span>Transfer Bank (BSI)</span>
+          </label>
+          <label class="flex items-center gap-2">
+            <input type="radio" name="payMethod" value="bri" class="text-rose-600 focus:ring-rose-500">
+            <span>Transfer Bank (BRI)</span>
           </label>
           <label class="flex items-center gap-2">
             <input type="radio" name="payMethod" value="ovo" class="text-rose-600 focus:ring-rose-500">
@@ -231,34 +235,95 @@
       if (sec) sec.scrollIntoView({ behavior: "smooth" });
     });
 
-    /* ====== DETAIL METODE TANDA KASIH (BSI / OVO) ====== */
+    /* ====== DETAIL METODE TANDA KASIH (BSI / BRI / OVO) ====== */
     const paymentDetails = {
-      bsi: "Bank Syariah Indonesia (BSI)\nNo.Rek: 7195450433\nA.N: Jabir",
-      ovo: "No. OVO: 082122346705\nNama: Jabir"
+      bsi: {
+        lines: [
+          "Bank Syariah Indonesia (BSI)",
+          "No.Rek: 7290297359",
+          "A.N: Muhammad Nirwan Ghozaly"
+        ],
+        // pakai link store generik; deep-link mBanking biasanya tidak terdokumentasi publik
+        playStore: "https://play.google.com/store/search?q=BSI%20Mobile",
+        appStore: "https://apps.apple.com/id/search?term=BSI%20Mobile",
+        deepLink: null
+      },
+      bri: {
+        lines: [
+          "Bank Rakyat Indonesia (BRI)",
+          "No.Rek: 0184 0102 1592 539",
+          "A.N: Ahmad Sopan"
+        ],
+        playStore: "https://play.google.com/store/search?q=BRImo",
+        appStore: "https://apps.apple.com/id/search?term=BRImo",
+        deepLink: null
+      },
+      ovo: {
+        lines: [
+          "OVO",
+          "No. OVO: 083138020449",
+          "A.N: Muhammad Nirwan Ghozaly"
+        ],
+        // coba buka aplikasi OVO langsung; jika tidak terpasang, pengguna bisa pakai tombol store
+        deepLink: "ovo://transfer?phone=083138020449",
+        playStore: "https://play.google.com/store/search?q=OVO",
+        appStore: "https://apps.apple.com/id/app/ovo/id1192585550"
+      }
     };
+
     const radios = document.querySelectorAll("input[name='payMethod']");
     const detailBox = document.getElementById("payDetail");
 
+    function isIOS() { return /iPad|iPhone|iPod/i.test(navigator.userAgent); }
+    function isAndroid() { return /Android/i.test(navigator.userAgent); }
+
     function renderPayDetail(key) {
-      const content = paymentDetails[key];
+      const cfg = paymentDetails[key];
+      const text = cfg.lines.join("\n");
+
+      // tombol dasar: Salin
+      let buttons = `
+        <button class="rounded-xl border border-rose-200 px-3 py-1.5 hover:bg-rose-50" id="copyBtn">Salin</button>
+      `;
+
+      // OVO: tombol Bayar (deep-link)
+      if (cfg.deepLink) {
+        buttons += `
+          <a href="${cfg.deepLink}" class="rounded-xl bg-rose-600 text-white px-3 py-1.5 hover:bg-rose-700" id="payBtn">Bayar</a>
+        `;
+      }
+
+      // tombol buka aplikasi (via store—aman & pasti ada)
+      if (isAndroid() && cfg.playStore) {
+        buttons += `<a target="_blank" href="${cfg.playStore}" class="rounded-xl border border-rose-200 px-3 py-1.5 hover:bg-rose-50">Buka Aplikasi</a>`;
+      } else if (isIOS() && cfg.appStore) {
+        buttons += `<a target="_blank" href="${cfg.appStore}" class="rounded-xl border border-rose-200 px-3 py-1.5 hover:bg-rose-50">Buka Aplikasi</a>`;
+      }
+
       detailBox.innerHTML = `
-        <div class="flex items-start justify-between gap-3">
-          <div class="text-sm whitespace-pre-wrap">${content}</div>
-          <button class="shrink-0 rounded-xl border border-rose-200 px-3 py-1.5 hover:bg-rose-50" id="copyBtn">Salin</button>
-        </div>`;
+        <div class="flex items-start justify-between gap-3 flex-wrap">
+          <pre class="text-sm whitespace-pre-wrap">${text}</pre>
+          <div class="flex gap-2 mt-2">${buttons}</div>
+        </div>
+      `;
+
+      // handler salin
       document.getElementById("copyBtn").onclick = async () => {
         try {
-          await navigator.clipboard.writeText(content);
+          await navigator.clipboard.writeText(text);
           showAlert("Detail disalin.");
         } catch {
           showAlert("Gagal menyalin.", false);
         }
       };
     }
+
     radios.forEach(r => r.addEventListener("change", () => {
       const val = document.querySelector("input[name='payMethod']:checked").value;
       renderPayDetail(val);
     }));
+
+    // default tampilkan BSI
     renderPayDetail("bsi");
   </script>
 </body>
